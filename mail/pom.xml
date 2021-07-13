@@ -14,6 +14,12 @@
             <artifactId>mail</artifactId>
             <version>1.4.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>
