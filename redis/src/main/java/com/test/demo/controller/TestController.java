@@ -17,7 +17,7 @@ public class TestController {
     @GetMapping("/testHashPutIfAbsent")
     public String testHashPut(String key,String hashKey,String value){
         log.info("testHashPut");
-        boolean result = redisManager.putIfAbsent(key, hashKey, value);
+        boolean result = redisManager.hPutIfAbsent(key, hashKey, value);
         return result?"success":"failure";
     }
 }
