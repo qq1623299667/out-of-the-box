@@ -2,12 +2,25 @@ package com.example.shiro;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
+import java.util.Arrays;
+
 public class SecondRealm extends AuthorizingRealm {
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        String primaryPricncipal = (String)principalCollection.getPrimaryPrincipal();
+        System.out.println("用户主体："+primaryPricncipal);
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        simpleAuthorizationInfo.addRole("admin");
+        simpleAuthorizationInfo.addRoles(Arrays.asList("system","operator"));
+        return simpleAuthorizationInfo;
+    }
+
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)authenticationToken;
@@ -32,8 +45,4 @@ public class SecondRealm extends AuthorizingRealm {
         return new SimpleAuthenticationInfo("zhaoyun",md5Hash2, ByteSource.Util.bytes(salt),this.getName());
     }
 
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
-    }
 }

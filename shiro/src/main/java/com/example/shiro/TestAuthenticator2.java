@@ -29,6 +29,15 @@ public class TestAuthenticator2 {
             Subject subject = SecurityUtils.getSubject();
             subject.login(usernamePasswordToken);
             System.out.println("登录成功");
+
+            if(subject.isAuthenticated()){
+                //认证通过
+                if(subject.hasRole("admin")){
+                    System.out.println("该用户拥有admin的权限");
+                }else{
+                    System.out.println("该用户没有admin的权限");
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
