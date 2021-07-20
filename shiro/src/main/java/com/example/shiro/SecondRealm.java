@@ -18,6 +18,8 @@ public class SecondRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         simpleAuthorizationInfo.addRole("admin");
         simpleAuthorizationInfo.addRoles(Arrays.asList("system","operator"));
+        simpleAuthorizationInfo.addStringPermission("system:customer:view");
+        simpleAuthorizationInfo.addStringPermissions(Arrays.asList("system:*:view","system:supplier:delete"));
         return simpleAuthorizationInfo;
     }
 

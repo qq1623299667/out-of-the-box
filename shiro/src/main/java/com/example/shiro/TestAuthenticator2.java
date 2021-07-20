@@ -37,6 +37,17 @@ public class TestAuthenticator2 {
                 }else{
                     System.out.println("该用户没有admin的权限");
                 }
+
+                if(subject.isPermitted("system:customer:view")){
+                    System.out.println("该用户拥有system:customer:view的权限");
+                }else{
+                    System.out.println("该用户没有system:customer:view的权限");
+                }
+                if(subject.isPermitted("system:view:customer")){
+                    System.out.println("该用户拥有system:view:customer的权限");
+                }else{
+                    System.out.println("该用户没有system:view:customer的权限");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
