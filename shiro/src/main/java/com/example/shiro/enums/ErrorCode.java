@@ -13,6 +13,7 @@ public enum  ErrorCode {
     LOGIN_ERROR(10001,"登录失败"),
     USERNAME_PASSWORD_NOT_MATCH(10002,"账户名或密码错误！"),
     LOGOUT_SUCCESS(10003,"退出成功！"),
+    NOT_LOGIN(10004,"用户未登录！"),
     ;
 
     Integer code;
