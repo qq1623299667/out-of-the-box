@@ -1,4 +1,4 @@
-package com.example.shiro;
+package com.example.shiro.test;
 
 import org.apache.shiro.crypto.hash.Md5Hash;
 

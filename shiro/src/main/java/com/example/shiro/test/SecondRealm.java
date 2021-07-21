@@ -1,4 +1,4 @@
-package com.example.shiro;
+package com.example.shiro.test;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;

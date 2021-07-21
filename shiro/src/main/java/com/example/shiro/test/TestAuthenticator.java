@@ -1,11 +1,10 @@
-package com.example.shiro;
+package com.example.shiro.test;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
 
 public class TestAuthenticator {
