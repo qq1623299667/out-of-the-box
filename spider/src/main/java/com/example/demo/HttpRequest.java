@@ -5,11 +5,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class HttpRequest {
-    public static Map<String, String> cookies;
+    public static Map<String, String> cookies=new HashMap<>();
+    public static Map<String, String> headers = new HashMap<>();
+    static {
+        headers.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36");
+    }
 
     public static void main(String[] args) throws IOException {
         // 登录
@@ -34,10 +38,8 @@ public class HttpRequest {
     // get请求数据
     public static String get(String url1) throws IOException {
         Connection connection = Jsoup.connect(url1).ignoreContentType(true);
-        Set<Map.Entry<String, String>> entries = cookies.entrySet();
-        for(Map.Entry<String, String> entry:entries){
-            connection.cookie(entry.getKey(), entry.getValue());
-        }
+        connection.cookies(cookies);
+        connection.headers(headers);
         Document objectDoc = connection.get();
         return objectDoc.text();
     }
@@ -61,10 +63,7 @@ public class HttpRequest {
                 .header("Content-Type", "application/json")
                 .ignoreContentType(true)
                 .method(Connection.Method.POST);
-        Set<Map.Entry<String, String>> entries = cookies.entrySet();
-        for(Map.Entry<String, String> entry:entries){
-            connection.cookie(entry.getKey(), entry.getValue());
-        }
+        connection.cookies(cookies);
         Connection.Response execute = connection.execute();
         return execute.parse().text();
     }
