@@ -96,12 +96,17 @@ public class RedisManager {
     }
 
     // 查询
-    public Object hGet(String key, String hashKey){
-        return hashHandler.get(key,hashKey);
+    public Object hGetAll(String key, String hashKey){
+        return hashHandler.getAll(key,hashKey);
     }
 
     // 查询
     public Object hMultiGet(String key, List<Object> hashKeys){
         return hashHandler.multiGet(key,hashKeys);
+    }
+
+    // 查询
+    public Map<Object, Object> hGetAll(String key){
+        return hashHandler.getAll(key);
     }
 }

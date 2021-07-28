@@ -40,11 +40,15 @@ public class HashHandler{
         return getHashOperations().hasKey(key,hashKey);
     }
 
-    public Object get(String key, String hashKey) {
+    public Object getAll(String key, String hashKey) {
         return getHashOperations().get(key,hashKey);
     }
 
     public Object multiGet(String key, List<Object> hashKeys) {
         return getHashOperations().multiGet(key,hashKeys);
+    }
+
+    public Map<Object, Object> getAll(String key) {
+        return getHashOperations().entries(key);
     }
 }

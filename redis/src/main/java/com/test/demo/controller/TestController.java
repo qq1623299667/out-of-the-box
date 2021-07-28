@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/test")
 @Slf4j
@@ -15,9 +17,9 @@ public class TestController {
     private RedisManager redisManager;
 
     @GetMapping("/testHashPutIfAbsent")
-    public String testHashPut(String key,String hashKey,String value){
+    public Object testHashPut(String key){
         log.info("testHashPut");
-        boolean result = redisManager.hPutIfAbsent(key, hashKey, value);
-        return result?"success":"failure";
+        Map<Object, Object> objectObjectMap = redisManager.hGetAll(key);
+        return objectObjectMap;
     }
 }
