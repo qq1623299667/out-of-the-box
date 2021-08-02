@@ -3,6 +3,7 @@ package com.example.toolsaspect.aspect;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -25,21 +26,30 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class LogAspect {
-    @Pointcut("execution(* com.example.toolsaspect.controller.*.*(..))")
+    // 开关，如果只是测试的时候使用，发布的时候改为false即可
+    @Value("${showDiffLog:true}")
+    private boolean showDiffLog;
+
+    @Pointcut("execution(* com..controller.*.*(..))")
     public void controllerLog() {
 
     }
 
-    @Pointcut("execution(* com.example.toolsaspect.service.*.*(..))")
+
+    @Pointcut("execution(* com..service.*.*(..))")
     public void serviceLog() {
 
     }
+
 
     /**
      * 方法请求参数
      */
     @Before("controllerLog()||serviceLog()")
     public void doBefore(JoinPoint joinPoint) {
+        if(!showDiffLog){
+            return;
+        }
         HttpServletRequest request = getHttpServletRequest();
         if (request == null) return;
 
@@ -68,15 +78,21 @@ public class LogAspect {
         return servletRequestAttributes.getRequest();
     }
 
-    @AfterReturning(returning = "returnOb", pointcut = "controllerLog() ")
+    @AfterReturning(returning = "returnOb", pointcut = "controllerLog()")
     public void doAfterReturning(JoinPoint joinPoint, Object returnOb) {
+        if(!showDiffLog){
+            return;
+        }
         HttpServletRequest request = getHttpServletRequest();
         if (request == null) return;
         log.info("requestId:{},result:{}",request.getAttribute("requestId"),returnOb);
     }
 
-    @AfterThrowing(pointcut = "controllerLog() ", throwing = "ex")
+    @AfterThrowing(pointcut = "controllerLog()", throwing = "ex")
     public void doAfterThrowing(JoinPoint joinPoint, Exception ex) {
+        if(!showDiffLog){
+            return;
+        }
         HttpServletRequest request = getHttpServletRequest();
         if (request == null) return;
         log.info("requestId:{},errorMsg:{}",request.getAttribute("requestId"),ex);
