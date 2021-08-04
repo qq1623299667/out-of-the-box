@@ -4,6 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 
+
+/**
+ * 加密文件，逐字加密，只加密前10个字节，非常慢，1M耗时接近10秒
+ * @author Will Shi
+ * @since 2021/8/4
+ */
 @Slf4j
 public class FileEncrypt2 {
     private static final int numOfEncAndDec = 0x99; //加密解密秘钥
