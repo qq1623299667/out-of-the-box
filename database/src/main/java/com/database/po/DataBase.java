@@ -1,15 +1,22 @@
-package com.database;
+package com.database.po;
+
+import com.database.util.SqlUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+@Component
 public class DataBase {
+    @Autowired
+    private SqlUtil sqlUtil;
+
     public static void main(String[] args) {
 //        String backupCommand = "D:\\program\\mysql-8.0.26-winx64\\bin\\mysqldump -uroot -proot -R -c --set-charset=utf8 pulmonary_function";
         String outPutPath = "D:\\pulmonary_function.sql";
 //        backup(backupCommand,outPutPath);
 
-        String loadCommand = "mysql -uroot -proot pulmonary_function1";
-        loadAll(outPutPath,loadCommand);
+        loadAll(outPutPath);
     }
 
     // 备份文件到指定路径
@@ -45,10 +52,10 @@ public class DataBase {
     }
 
     // 读取加载文件到其他服务器：全量复制,适合数据量较小
-    public static void loadAll(String path, String command) {
+    public static void loadAll(String path) {
         try {
             Runtime rt = Runtime.getRuntime();
-
+            String command = "mysql -uroot -proot pulmonary_function1";
             Process child = rt.exec(command);
             OutputStream out = child.getOutputStream();
 
@@ -69,6 +76,7 @@ public class DataBase {
 
                 // 数据入库
                 // TODO 没有表格则执行建表语句
+
 
                 // TODO 不相同数据直接入库
                 // TODO 相同数据覆盖操作

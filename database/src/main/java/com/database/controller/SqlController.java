@@ -1,6 +1,7 @@
 package com.database.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.database.po.DataBase;
 import com.database.util.SqlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,10 @@ import java.util.Map;
 public class SqlController {
     @Autowired
     private SqlUtil sqlUtil;
+
+    @Autowired
+    private DataBase dataBase;
+
     private static final String script="<script>";
     private static final String back_script="</script>";
 
@@ -58,7 +63,11 @@ public class SqlController {
 
     @GetMapping("/test2")
     public String test2(String sql){
-        List<Map<String, Object>> query = sqlUtil.query(sql);
-        return JSON.toJSONString(query);
+//        List<Map<String, Object>> query = sqlUtil.query(sql);
+//        return JSON.toJSONString(query);
+
+        String outPutPath = "D:\\pulmonary_function.sql";
+        dataBase.loadAll(outPutPath);
+        return null;
     }
 }
