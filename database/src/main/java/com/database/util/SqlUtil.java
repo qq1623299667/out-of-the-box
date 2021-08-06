@@ -101,4 +101,90 @@ public class SqlUtil {
         return resutls;
     }
 
+    /**
+     * 获取insert语句的第一个字段
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    private String getInsertFirstColumn(String sql) {
+        String[] split = sql.split("`");
+        return split[3];
+    }
+
+    /**
+     * 获取sql语句的第一个栏
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    public String getFirstColumn(String sql) {
+        if(sql.startsWith("INSERT INTO")){
+            return getInsertFirstColumn(sql);
+        }
+        return null;
+    }
+
+    /**
+     * 获取新增sql语句的第一个值
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    private String getInsertFirstValue(String sql) {
+        String[] split = sql.split("\\) VALUES \\(");
+        return split[1].split(",")[0];
+    }
+
+
+    /**
+     * 获取sql语句的第一个值
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    public String getFirstValue(String sql) {
+        if(sql.startsWith("INSERT INTO")){
+            return getInsertFirstValue(sql);
+        }
+        return null;
+    }
+
+    /**
+     * 删掉自增id
+     * @author Will Shi
+     * @since 2021/8/5
+     */
+    public String removeInsertSqlIncrementId(String sql) {
+        // 去掉第一个字段
+        String firstColumn = getFirstColumn(sql);
+        sql = sql.replace("`"+firstColumn+"`,", "");
+        // 去掉第一个值
+        String pointer = ") VALUES (";
+        int pointerInt = sql.indexOf(pointer);
+        String left = sql.substring(0,pointerInt+10);
+        String firstValue = getFirstValue(sql);
+        String right = sql.substring(left.length()+firstValue.length()+1);
+        sql = left+right;
+        return sql;
+    }
+
+    /**
+     * 获取插入sql语句的表名
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    private String getInsertSqlTableName(String sql){
+        String[] split = sql.split("`");
+        String tableName = split[1];
+        return tableName;
+    }
+
+    /**
+     * 获取sql语句的表名
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    public String getTableName(String sql){
+        if(sql.startsWith("INSERT INTO")){
+            return getInsertSqlTableName(sql);
+        }
+        return null;
+    }
 }

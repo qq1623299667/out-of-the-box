@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Component
@@ -94,9 +96,7 @@ public class DataBase {
                     // 数据入库
                     if(sql.startsWith("CREATE")){
                         // 没有表格则执行建表语句
-                        String[] split = sql.split("`");
-                        String tableName = split[1];
-                        boolean tableExist = table.existTable(tableName);
+                        boolean tableExist = table.existTable(sqlUtil.getTableName(sql));
                         if(!tableExist){
                             runCommand(writer,sql);
                         }
@@ -105,7 +105,9 @@ public class DataBase {
                         String sql1 = handlePrimaryKey(sql);
                         // TODO 不相同数据直接入库
                         // TODO 相同数据覆盖操作
-                        boolean existData = table.existData(sql1);
+                        String tableName = sqlUtil.getTableName(sql1);
+                        Map<String,String> map = new HashMap<>();
+                        boolean existData = table.existData(tableName,map);
                         if(existData){
                             String sql2 = changeInsetSqlToUpdateSql(sql1);
                             runCommand(writer,sql2);
@@ -137,24 +139,14 @@ public class DataBase {
      * @since 2021/8/6
      */
     private String handlePrimaryKey(String sql) {
-        String id = getFirstValue(sql);
+        String id = sqlUtil.getFirstValue(sql);
         Pattern pattern = Pattern.compile("^[\\d]*$");
 
         // 如果是正整数，就去掉id
         if(pattern.matcher(id).matches()){
-            return removeIncrementId(sql);
+            return sqlUtil.removeInsertSqlIncrementId(sql);
         }
         return sql;
-    }
-
-    /**
-     * 获取第一个值
-     * @author Will Shi
-     * @since 2021/8/6
-     */
-    private String getFirstValue(String sql) {
-        String[] split = sql.split("\\) VALUES \\(");
-        return split[1].split(",")[0];
     }
 
     /**
@@ -166,34 +158,7 @@ public class DataBase {
         return sql1;
     }
 
-    /**
-     * 删掉自增id
-     * @author Will Shi
-     * @since 2021/8/5
-     */
-    private String removeIncrementId(String sql) {
-         // 去掉第一个字段
-        String firstColumn = getFirstColumn(sql);
-        sql = sql.replace("`"+firstColumn+"`,", "");
-        // TODO 去掉第一个值
-        String pointer = ") VALUES (";
-        int pointerInt = sql.indexOf(pointer);
-        String left = sql.substring(0,pointerInt+10);
-        String firstValue = getFirstValue(sql);
-        String right = sql.substring(left.length()+firstValue.length()+1);
-        sql = left+right;
-        return sql;
-    }
 
-    /**
-     * 获取第一个字段
-     * @author Will Shi
-     * @since 2021/8/6
-     */
-    private String getFirstColumn(String sql) {
-        String[] split = sql.split("`");
-        return split[3];
-    }
 
     /**
      * 执行命令

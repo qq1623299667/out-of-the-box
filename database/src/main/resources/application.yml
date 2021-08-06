@@ -101,7 +101,7 @@ mybatis-plus: #mybatis-plus配置
      map-underscore-to-camel-case: true
      use-generated-keys: true
   mapper-locations: classpath*:/mappers/**/*.xml
-  type-handlers-package: com.medcaptain.lungFunction.config.DataSourceConfig
-  #type-aliases-package: com.medcaptain.lungFunction.domain.entity
+  type-handlers-package: com.config.DataSourceConfig
+  #type-aliases-package: com.domain.entity
   #type-aliases-package作用
   #在Mybatis的mapper.xml文件中resultType的type或者paramterType会返回自定义entity，此时可以用全类名名来指定这些实体
