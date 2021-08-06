@@ -70,14 +70,17 @@ public class DataBase {
 
             StringBuilder sb = new StringBuilder();
             while ((inStr = br.readLine()) != null) {
-                if(inStr.startsWith("--") || inStr.equals("")){
+                if(inStr.startsWith("--")
+                        || inStr.equals("")
+                        ||inStr.startsWith("UNLOCK")
+                        ||inStr.startsWith("LOCK")){
                     continue;
                 }
                 sb.append(inStr + "\r\n");
                 // sql数据必须结尾
                 if(inStr.endsWith(";")){
-                    // sql 一共4种：注释(单行注释末尾不用加分号，提前判断，多行注释放行到分号)，
-                    // 删除表，新增表，新增数据
+                    // sql 解析到的数据一共7种：注释(单行注释末尾不用加分号，提前判断，多行注释放行到分号)，
+                    // 空串，加锁，解锁，删除表，新增表，新增数据
                     String sql = sb.toString();
                     clear(sb);
 
@@ -91,7 +94,7 @@ public class DataBase {
                     // 数据入库
                     if(sql.startsWith("CREATE")){
                         // 没有表格则执行建表语句
-                        String[] split = inStr.split("`");
+                        String[] split = sql.split("`");
                         String tableName = split[1];
                         boolean tableExist = table.existTable(tableName);
                         if(!tableExist){
@@ -99,7 +102,7 @@ public class DataBase {
                         }
                     }else{// 数据插入
                         // sql如果存在自增id，删掉自增id
-                        String sql1 = removeIncrementId(sql);
+                        String sql1 = handlePrimaryKey(sql);
                         // TODO 不相同数据直接入库
                         // TODO 相同数据覆盖操作
                         boolean existData = table.existData(sql1);
@@ -129,6 +132,23 @@ public class DataBase {
     }
 
     /**
+     * 主键处理
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    private String handlePrimaryKey(String sql) {
+        String[] split = sql.split("\\) VALUES \\(");
+        String id = split[1].split(",")[0];
+        Pattern pattern = Pattern.compile("^[\\d]*$");
+
+        // 如果是正整数，就去掉id
+        if(pattern.matcher(id).matches()){
+            return removeIncrementId(sql);
+        }
+        return sql;
+    }
+
+    /**
      * 将插入的sql转换成修改sql
      * @author Will Shi
      * @since 2021/8/5
@@ -138,23 +158,19 @@ public class DataBase {
     }
 
     /**
-     * TODO sql如果存在自增id，删掉自增id
+     * 删掉自增id
      * @author Will Shi
      * @since 2021/8/5
      */
     private String removeIncrementId(String sql) {
-        String[] split = sql.split("\\) VALUES \\(");
-        String id = split[1].split(",")[0];
-        Pattern pattern = Pattern.compile("^[\\d]*$");
-
-        // 如果是正整数，就去掉id
-        if(pattern.matcher(id).matches()){
-             // 去掉第一个字段
-            String firstColumn = sql.substring(sql.indexOf("\\("), sql.indexOf(","));
-            sql.replace(firstColumn, "");
-            // 去掉第一个值
-            sql = split[0]+split[1].substring(split[1].indexOf(","));
-        }
+         // 去掉第一个字段
+        String[] split = sql.split("`");
+        String firstColumn = split[3];
+        sql.replace(firstColumn, "");
+        // TODO 去掉第一个值
+        String pointer = ") VALUES (";
+        int pointerInt = sql.indexOf(pointer);
+        sql = split[0]+split[1].substring(split[1].indexOf(","));
         return sql;
     }
 
