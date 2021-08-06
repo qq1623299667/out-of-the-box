@@ -137,8 +137,7 @@ public class DataBase {
      * @since 2021/8/6
      */
     private String handlePrimaryKey(String sql) {
-        String[] split = sql.split("\\) VALUES \\(");
-        String id = split[1].split(",")[0];
+        String id = getFirstValue(sql);
         Pattern pattern = Pattern.compile("^[\\d]*$");
 
         // 如果是正整数，就去掉id
@@ -146,6 +145,16 @@ public class DataBase {
             return removeIncrementId(sql);
         }
         return sql;
+    }
+
+    /**
+     * 获取第一个值
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    private String getFirstValue(String sql) {
+        String[] split = sql.split("\\) VALUES \\(");
+        return split[1].split(",")[0];
     }
 
     /**
@@ -164,14 +173,26 @@ public class DataBase {
      */
     private String removeIncrementId(String sql) {
          // 去掉第一个字段
-        String[] split = sql.split("`");
-        String firstColumn = split[3];
-        sql.replace(firstColumn, "");
+        String firstColumn = getFirstColumn(sql);
+        sql = sql.replace("`"+firstColumn+"`,", "");
         // TODO 去掉第一个值
         String pointer = ") VALUES (";
         int pointerInt = sql.indexOf(pointer);
-        sql = split[0]+split[1].substring(split[1].indexOf(","));
+        String left = sql.substring(0,pointerInt+10);
+        String firstValue = getFirstValue(sql);
+        String right = sql.substring(left.length()+firstValue.length()+1);
+        sql = left+right;
         return sql;
+    }
+
+    /**
+     * 获取第一个字段
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    private String getFirstColumn(String sql) {
+        String[] split = sql.split("`");
+        return split[3];
     }
 
     /**
