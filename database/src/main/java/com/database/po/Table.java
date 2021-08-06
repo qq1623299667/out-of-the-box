@@ -34,9 +34,9 @@ public class Table {
         for(Map.Entry<String, String> entry:map.entrySet()){
             String column = entry.getKey();
             String columnValue = entry.getValue();
-            sb.append(column+"="+columnValue);
+            sb.append(" and "+column+"="+columnValue);
         }
-        String sql = "select count(1) from "+tableName+" where "+sb.toString();
+        String sql = "select count(1) from "+tableName+" where 1=1 "+sb.toString();
         List<Map<String, Object>> query = sqlUtil.query(sql);
         return query.size()>0;
     }

@@ -66,7 +66,7 @@ public class SqlController {
 
     @GetMapping("/test2")
     public void test2(){
-        dataBase.loadAll("D:\\1.sql");
+        dataBase.loadAll("D:\\pulmonary_function.sql");
 //        String backupCommand = "D:\\program\\mysql-8.0.26-winx64\\bin\\mysqldump -uroot -proot -R -c --set-charset=utf8 pulmonary_function";
 //        String outPutPath = "D:\\pulmonary_function.sql";
 //        dataBase.backup(backupCommand,outPutPath);

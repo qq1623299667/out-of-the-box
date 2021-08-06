@@ -129,8 +129,9 @@ public class SqlUtil {
      * @since 2021/8/6
      */
     private String getInsertFirstValue(String sql) {
-        String[] split = sql.split("\\) VALUES \\(");
-        return split[1].split(",")[0];
+        List<String> strings = HighStringUtil.extractParenthesisContent(sql);
+        String values = strings.get(1);
+        return values.split(",")[0];
     }
 
 
@@ -182,7 +183,7 @@ public class SqlUtil {
      * @since 2021/8/6
      */
     public String getTableName(String sql){
-        if(sql.startsWith("INSERT INTO")){
+        if(sql.startsWith("CREATE TABLE") || sql.startsWith("INSERT INTO")){
             return getInsertSqlTableName(sql);
         }
         return null;

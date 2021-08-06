@@ -1,6 +1,8 @@
 package com.database.po;
 
+import com.database.util.HighStringUtil;
 import com.database.util.SqlUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Component
 public class DataBase {
     @Autowired
@@ -98,19 +101,25 @@ public class DataBase {
                         for(int i=0;i<list.size();i++){
                             //  否则去掉自增id，校验数据是否存在等信息不好处理
                             // sql如果存在自增id，删掉自增id
-                            String sql1 = handlePrimaryKey(list.get(i));
-                            // TODO 不相同数据直接入库
-                            // TODO 相同数据覆盖操作
+                            String sql1 = list.get(i);
+                            sql1 = handlePrimaryKey(sql1);
+                            // 不相同数据直接入库
+                            // 相同数据覆盖操作
                             String tableName = sqlUtil.getTableName(sql1);
                             boolean checkDataRepeat = true;
                             Map<String,String> map = new HashMap<>();
                             if(tableName.equals("p_test_data")){
                                 checkDataRepeat = false;
-                            }else if(tableName.equals("person_message")){
-                                map.put("id_type","");
-                                map.put("id_number","");
-                            }else if(tableName.equals("person_message_history")){
-                                map.put("test_num","");
+                            }else {
+                                List<String> list1 = HighStringUtil.extractParenthesisContent(sql1);
+                                String columnValue = list1.get(1);
+                                String[] split = columnValue.split(",");
+                                if(tableName.equals("person_message")){
+                                    map.put("id_type",split[1]);
+                                    map.put("id_number",split[2]);
+                                }else if(tableName.equals("person_message_history")){
+                                    map.put("test_num",split[2]);
+                                }
                             }
 
                             if(!checkDataRepeat){
@@ -118,6 +127,7 @@ public class DataBase {
                             }else{
                                 boolean existData = table.existData(tableName,map);
                                 if(existData){
+                                    // TODO 将插入的sql转换成修改sql
                                     String sql2 = changeInsetSqlToUpdateSql(sql1);
                                     runCommand(writer,sql2);
                                 }else{
@@ -177,7 +187,7 @@ public class DataBase {
      * @since 2021/8/5
      */
     private void runCommand(OutputStreamWriter writer, String sql) throws IOException {
-        printLn(sql);
+        log.info(sql);
         writer.write(sql);
         writer.flush();
     }
@@ -186,9 +196,5 @@ public class DataBase {
         if(sb.length()>0){
             sb.delete(0,sb.length());
         }
-    }
-
-    public static void printLn(String string){
-        System.out.println(string);
     }
 }
