@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -93,6 +94,7 @@ public class DataBase {
                         }
                     }else{// 数据插入
                         // TODO 批量入库的sql需要拆成单独入库的sql
+                        List<String> list = sqlUtil.parseBatchInsertSqlToSimple(sql);
                         //  否则去掉自增id，校验数据是否存在等信息不好处理
                         // sql如果存在自增id，删掉自增id
                         String sql1 = handlePrimaryKey(sql);

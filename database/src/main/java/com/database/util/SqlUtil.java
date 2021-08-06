@@ -187,4 +187,13 @@ public class SqlUtil {
         }
         return null;
     }
+
+    /**
+     * 将批量入库的sql拆成单独入库的sql
+     * @author Will Shi
+     * @since 2021/8/6
+     */
+    public List<String> parseBatchInsertSqlToSimple(String batchInsertSql) {
+        return null;
+    }
 }
