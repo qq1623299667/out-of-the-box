@@ -194,6 +194,16 @@ public class SqlUtil {
      * @since 2021/8/6
      */
     public List<String> parseBatchInsertSqlToSimple(String batchInsertSql) {
-        return null;
+        // 拿到固定的插入column语句部分
+        List<String> strings = HighStringUtil.extractParenthesisContent(batchInsertSql);
+        String insertColumnSql = batchInsertSql.substring(0,batchInsertSql.indexOf("("))+"("+strings.get(0)+") values (";
+        // 拿到value的语句部分
+        List<String> insertSqls = new ArrayList<>();
+        for(int i=1;i<strings.size();i++){
+            String sql = insertColumnSql+strings.get(i)+")";
+            insertSqls.add(sql);
+        }
+        // 循环组装
+        return insertSqls;
     }
 }

@@ -93,34 +93,36 @@ public class DataBase {
                             runCommand(writer,sql);
                         }
                     }else{// 数据插入
-                        // TODO 批量入库的sql需要拆成单独入库的sql
+                        // 批量入库的sql需要拆成单独入库的sql
                         List<String> list = sqlUtil.parseBatchInsertSqlToSimple(sql);
-                        //  否则去掉自增id，校验数据是否存在等信息不好处理
-                        // sql如果存在自增id，删掉自增id
-                        String sql1 = handlePrimaryKey(sql);
-                        // TODO 不相同数据直接入库
-                        // TODO 相同数据覆盖操作
-                        String tableName = sqlUtil.getTableName(sql1);
-                        boolean checkDataRepeat = true;
-                        Map<String,String> map = new HashMap<>();
-                        if(tableName.equals("p_test_data")){
-                            checkDataRepeat = false;
-                        }else if(tableName.equals("person_message")){
-                            map.put("id_type","");
-                            map.put("id_number","");
-                        }else if(tableName.equals("person_message_history")){
-                            map.put("test_num","");
-                        }
+                        for(int i=0;i<list.size();i++){
+                            //  否则去掉自增id，校验数据是否存在等信息不好处理
+                            // sql如果存在自增id，删掉自增id
+                            String sql1 = handlePrimaryKey(list.get(i));
+                            // TODO 不相同数据直接入库
+                            // TODO 相同数据覆盖操作
+                            String tableName = sqlUtil.getTableName(sql1);
+                            boolean checkDataRepeat = true;
+                            Map<String,String> map = new HashMap<>();
+                            if(tableName.equals("p_test_data")){
+                                checkDataRepeat = false;
+                            }else if(tableName.equals("person_message")){
+                                map.put("id_type","");
+                                map.put("id_number","");
+                            }else if(tableName.equals("person_message_history")){
+                                map.put("test_num","");
+                            }
 
-                        if(!checkDataRepeat){
-                            runCommand(writer, sql1);
-                        }else{
-                            boolean existData = table.existData(tableName,map);
-                            if(existData){
-                                String sql2 = changeInsetSqlToUpdateSql(sql1);
-                                runCommand(writer,sql2);
-                            }else{
+                            if(!checkDataRepeat){
                                 runCommand(writer, sql1);
+                            }else{
+                                boolean existData = table.existData(tableName,map);
+                                if(existData){
+                                    String sql2 = changeInsetSqlToUpdateSql(sql1);
+                                    runCommand(writer,sql2);
+                                }else{
+                                    runCommand(writer, sql1);
+                                }
                             }
                         }
                     }
