@@ -16,15 +16,6 @@ public class DataBase {
     @Autowired
     private Table table;
 
-    public static void main(String[] args) {
-//        String backupCommand = "D:\\program\\mysql-8.0.26-winx64\\bin\\mysqldump -uroot -proot -R -c --set-charset=utf8 pulmonary_function";
-        String outPutPath = "D:\\pulmonary_function.sql";
-//        backup(backupCommand,outPutPath);
-
-        DataBase dataBase = new DataBase();
-        dataBase.loadAll(outPutPath);
-    }
-
     // 备份文件到指定路径
     public void backup(String backupCommand,String outPutPath) {
         try {
@@ -101,18 +92,34 @@ public class DataBase {
                             runCommand(writer,sql);
                         }
                     }else{// 数据插入
+                        // TODO 批量入库的sql需要拆成单独入库的sql
+                        //  否则去掉自增id，校验数据是否存在等信息不好处理
                         // sql如果存在自增id，删掉自增id
                         String sql1 = handlePrimaryKey(sql);
                         // TODO 不相同数据直接入库
                         // TODO 相同数据覆盖操作
                         String tableName = sqlUtil.getTableName(sql1);
+                        boolean checkDataRepeat = true;
                         Map<String,String> map = new HashMap<>();
-                        boolean existData = table.existData(tableName,map);
-                        if(existData){
-                            String sql2 = changeInsetSqlToUpdateSql(sql1);
-                            runCommand(writer,sql2);
-                        }else{
+                        if(tableName.equals("p_test_data")){
+                            checkDataRepeat = false;
+                        }else if(tableName.equals("person_message")){
+                            map.put("id_type","");
+                            map.put("id_number","");
+                        }else if(tableName.equals("person_message_history")){
+                            map.put("test_num","");
+                        }
+
+                        if(!checkDataRepeat){
                             runCommand(writer, sql1);
+                        }else{
+                            boolean existData = table.existData(tableName,map);
+                            if(existData){
+                                String sql2 = changeInsetSqlToUpdateSql(sql1);
+                                runCommand(writer,sql2);
+                            }else{
+                                runCommand(writer, sql1);
+                            }
                         }
                     }
                 }
