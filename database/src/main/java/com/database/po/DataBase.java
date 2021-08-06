@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -127,8 +128,8 @@ public class DataBase {
                             }else{
                                 boolean existData = table.existData(tableName,map);
                                 if(existData){
-                                    // TODO 将插入的sql转换成修改sql
-                                    String sql2 = changeInsetSqlToUpdateSql(sql1);
+                                    // 将插入的sql转换成修改sql
+                                    String sql2 = changeInsetSqlToUpdateSql(sql1,map);
                                     runCommand(writer,sql2);
                                 }else{
                                     runCommand(writer, sql1);
@@ -175,8 +176,25 @@ public class DataBase {
      * @author Will Shi
      * @since 2021/8/5
      */
-    private String changeInsetSqlToUpdateSql(String sql1) {
-        return sql1;
+    private String changeInsetSqlToUpdateSql(String sql1,Map<String,String> map) {
+        List<String> strings = HighStringUtil.extractParenthesisContent(sql1);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("UPDATE "+sqlUtil.getTableName(sql1)+" set ");
+        String[] columns = strings.get(0).split(",");
+        String[] values = strings.get(1).split(",");
+        for(int i=0;i<columns.length;i++){
+            stringBuilder.append(" "+columns[i]+"="+values[i]);
+            if(i!=columns.length-1){
+                stringBuilder.append(",");
+            }
+        }
+        Set<Map.Entry<String, String>> entries = map.entrySet();
+        stringBuilder.append(" where 1=1 ");
+        for(Map.Entry<String, String> entry:entries){
+            stringBuilder.append(" and "+entry.getKey()+"="+entry.getValue());
+
+        }
+        return stringBuilder.toString();
     }
 
 
