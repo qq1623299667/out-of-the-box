@@ -1,6 +1,7 @@
 package com.database.util;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
@@ -14,10 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class SqlUtil {
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
+
+    private static final String valueAndParentheses = ") VALUES (";
 
     /**
      * sql拼接
@@ -158,7 +162,7 @@ public class SqlUtil {
         String firstColumn = getFirstColumn(sql);
         sql = sql.replace("`"+firstColumn+"`,", "");
         // 去掉第一个值
-        String pointer = ") VALUES (";
+        String pointer = valueAndParentheses;
         int pointerInt = sql.indexOf(pointer);
         String left = sql.substring(0,pointerInt+10);
         String firstValue = getFirstValue(sql);
@@ -196,9 +200,10 @@ public class SqlUtil {
      * @since 2021/8/6
      */
     public List<String> parseBatchInsertSqlToSimple(String batchInsertSql) {
+        log.debug(batchInsertSql);
         // 拿到固定的插入column语句部分
         List<String> strings = HighStringUtil.extractParenthesisContent(batchInsertSql);
-        String insertColumnSql = batchInsertSql.substring(0,batchInsertSql.indexOf("("))+"("+strings.get(0)+") values (";
+        String insertColumnSql = batchInsertSql.substring(0,batchInsertSql.indexOf("("))+"("+strings.get(0)+valueAndParentheses;
         // 拿到value的语句部分
         List<String> insertSqls = new ArrayList<>();
         for(int i=1;i<strings.size();i++){
