@@ -13,7 +13,7 @@ spring:
         min-idle: 5       # 连接池中的最小空闲连接
 sql1: #主数据库
   datasource:
-    url: jdbc:mysql://localhost:3306/pulmonary_function?useAffectedRows=true&useSSL=false&serverTimezone=UTC&&characterEncoding=UTF-8&&useUnicode=true&amp
+    url: jdbc:mysql://localhost:3306/pulmonary_function1?useAffectedRows=true&useSSL=false&serverTimezone=UTC&&characterEncoding=UTF-8&&useUnicode=true&amp
     username: root
     password: root
     driverClassName: com.mysql.jdbc.Driver
