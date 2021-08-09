@@ -56,13 +56,13 @@ public class DataBase {
     // 读取加载文件到其他服务器：全量复制,适合数据量较小
     public void loadAll(String path) {
         try {
-            Runtime rt = Runtime.getRuntime();
-            String command = "mysql -uroot -proot pulmonary_function1";
-            Process child = rt.exec(command);
-            OutputStream out = child.getOutputStream();
+//            Runtime rt = Runtime.getRuntime();
+//            String command = "mysql -uroot -proot pulmonary_function1";
+//            Process child = rt.exec(command);
+//            OutputStream out = child.getOutputStream();
 
             String inStr;
-            OutputStreamWriter writer = new OutputStreamWriter(out, "utf8");
+//            OutputStreamWriter writer = new OutputStreamWriter(out, "utf8");
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "utf8"));
 
             StringBuilder sb = new StringBuilder();
@@ -93,7 +93,8 @@ public class DataBase {
                         // 没有表格则执行建表语句
                         boolean tableExist = table.existTable(sqlUtil.getTableName(sql));
                         if(!tableExist){
-                            runCommand(writer,sql);
+//                            runCommand(writer,sql);
+                            sqlUtil.query(sql);
                         }
                     }else{// 数据插入
                         // 批量入库的sql需要拆成单独入库的sql
@@ -123,15 +124,18 @@ public class DataBase {
                             }
 
                             if(!checkDataRepeat){
-                                runCommand(writer, sql1);
+//                                runCommand(writer, sql1);
+                                sqlUtil.query(sql1);
                             }else{
                                 boolean existData = table.existData(tableName,map);
                                 if(existData){
                                     // 将插入的sql转换成修改sql
                                     String sql2 = changeInsetSqlToUpdateSql(sql1,map);
-                                    runCommand(writer,sql2);
+//                                    runCommand(writer,sql2);
+                                    sqlUtil.query(sql2);
                                 }else{
-                                    runCommand(writer, sql1);
+//                                    runCommand(writer, sql1);
+                                    sqlUtil.query(sql1);
                                 }
                             }
                         }
@@ -146,9 +150,9 @@ public class DataBase {
 //            writer.flush();
 
 
-            out.close();
+//            out.close();
             br.close();
-            writer.close();
+//            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
