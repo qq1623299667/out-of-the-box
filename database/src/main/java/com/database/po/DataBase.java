@@ -177,11 +177,21 @@ public class DataBase {
      * @since 2021/8/5
      */
     private String changeInsetSqlToUpdateSql(String sql1,Map<String,String> map) {
+//        if(sql1.contains("0f0cc4decfc74207b5d6")){
+//            log.info(sql1);
+//        }
         List<String> strings = HighStringUtil.extractParenthesisContent(sql1);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("UPDATE "+sqlUtil.getTableName(sql1)+" set ");
         String[] columns = strings.get(0).split(",");
-        String[] values = strings.get(1).split(",");
+        String value = strings.get(1);
+        String[] values = null;
+        if(!value.contains("{")){
+            values = value.split(",");
+        }else {
+            // TODO 复杂数据处理起来非常困难
+            return "-- ";
+        }
         for(int i=0;i<columns.length;i++){
             stringBuilder.append(" "+columns[i]+"="+values[i]);
             if(i!=columns.length-1){
