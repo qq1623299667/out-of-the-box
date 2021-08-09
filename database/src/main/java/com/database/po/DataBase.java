@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -111,6 +108,7 @@ public class DataBase {
                     }else{// 数据插入
                         // 批量入库的sql需要拆成单独入库的sql
                         List<String> list = sqlUtil.parseBatchInsertSqlToSimple(sql);
+                        List<String> collect = new ArrayList<>();
                         for(int i=0;i<list.size();i++){
                             //  否则去掉自增id，校验数据是否存在等信息不好处理
                             // sql如果存在自增id，删掉自增id
@@ -137,7 +135,8 @@ public class DataBase {
 
                             if(!checkDataRepeat){
 //                                runCommand(writer, sql1);
-                                sqlUtil.query(sql1);
+                                collect.add(sql1);
+//                                sqlUtil.query(sql1);
                             }else{
                                 boolean existData = table.existData(tableName,map);
                                 if(existData){
@@ -147,9 +146,14 @@ public class DataBase {
                                     sqlUtil.query(sql2);
                                 }else{
 //                                    runCommand(writer, sql1);
-                                    sqlUtil.query(sql1);
+                                    collect.add(sql1);
+//                                    sqlUtil.query(sql1);
                                 }
                             }
+                        }
+                        if(collect.size()>0){
+                            String insertSql = sqlUtil.parseSimpleInsertSqlToBatch(collect);
+                            sqlUtil.query(insertSql);
                         }
                     }
                 }

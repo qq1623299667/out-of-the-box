@@ -213,4 +213,29 @@ public class SqlUtil {
         // 循环组装
         return insertSqls;
     }
+
+    /**
+     * 独立的插入sql转换成批量入库的sql
+     * @author Will Shi
+     * @since 2021/8/9
+     */
+    public String parseSimpleInsertSqlToBatch(List<String> list) {
+        String simpleSql = list.get(0);
+        // 拿到固定的插入column语句部分
+        List<String> strings = HighStringUtil.extractParenthesisContent(simpleSql);
+        String insertColumnSql = simpleSql.substring(0,simpleSql.indexOf("("))+"("+strings.get(0)+") VALUES ";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(insertColumnSql);
+        // 循环组装,拿到value的语句部分
+        for(int i=0;i<list.size();i++){
+            String s = list.get(i);
+            List<String> list2 = HighStringUtil.extractParenthesisContent(s);
+            String value = list2.get(1);
+            stringBuilder.append("( "+value+")");
+            if(i<list.size()-1){
+                stringBuilder.append(",");
+            }
+        }
+        return stringBuilder.toString();
+    }
 }
