@@ -30,14 +30,21 @@ public class DataBase {
             InputStream in = child.getInputStream();
             InputStreamReader xx = new InputStreamReader(in, "utf8");
             String inStr;
-            StringBuffer sb = new StringBuffer("");
+            StringBuilder sb = new StringBuilder();
             String outStr;
             BufferedReader br = new BufferedReader(xx);
             while ((inStr = br.readLine()) != null) {
+                if(inStr.startsWith("--") || inStr.equals("")){
+                    continue;
+                }
+                if(inStr.endsWith("*/;")){
+                    clear(sb);
+                    continue;
+                }
                 sb.append(inStr + "\r\n");
             }
             outStr = sb.toString();
-
+            log.debug(outStr);
             FileOutputStream fout = new FileOutputStream(outPutPath);
             OutputStreamWriter writer = new OutputStreamWriter(fout, "utf8");
             writer.write(outStr);
