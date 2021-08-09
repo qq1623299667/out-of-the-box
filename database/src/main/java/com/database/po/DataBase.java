@@ -33,6 +33,8 @@ public class DataBase {
             StringBuilder sb = new StringBuilder();
             String outStr;
             BufferedReader br = new BufferedReader(xx);
+            FileOutputStream fout = new FileOutputStream(outPutPath);
+            OutputStreamWriter writer = new OutputStreamWriter(fout, "utf8");
             while ((inStr = br.readLine()) != null) {
                 if(inStr.startsWith("--") || inStr.equals("")){
                     continue;
@@ -42,13 +44,16 @@ public class DataBase {
                     continue;
                 }
                 sb.append(inStr + "\r\n");
+                if(inStr.endsWith(";")){
+                    writer.write(sb.toString());
+                    writer.flush();
+                    clear(sb);
+                }
             }
-            outStr = sb.toString();
-            log.debug(outStr);
-            FileOutputStream fout = new FileOutputStream(outPutPath);
-            OutputStreamWriter writer = new OutputStreamWriter(fout, "utf8");
-            writer.write(outStr);
-            writer.flush();
+//            outStr = sb.toString();
+//            log.debug(outStr);
+//            writer.write(outStr);
+//            writer.flush();
 
             in.close();
             xx.close();
