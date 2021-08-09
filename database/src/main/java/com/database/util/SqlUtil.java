@@ -98,6 +98,7 @@ public class SqlUtil {
 //        }
         DefaultSqlSession defaultSqlSession = (DefaultSqlSession) sqlSessionFactory.openSession();
         List<Map<String, Object>> resutls = defaultSqlSession.selectList(mastpId, param);
+        defaultSqlSession.close();
         return resutls;
     }
 

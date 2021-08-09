@@ -1,6 +1,7 @@
 package com.database.po;
 
 import com.database.util.SqlUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+@Slf4j
 public class Table {
     @Autowired
     private SqlUtil sqlUtil;
@@ -37,7 +39,11 @@ public class Table {
             sb.append(" and "+column+"="+columnValue);
         }
         String sql = "select count(1) from "+tableName+" where 1=1 "+sb.toString();
+        log.debug(sql);
         List<Map<String, Object>> query = sqlUtil.query(sql);
-        return query.size()>0;
+        Map<String, Object> stringObjectMap = query.get(0);
+        Object o = stringObjectMap.get("count(1)");
+        Long count = (Long)o;
+        return count>0;
     }
 }

@@ -63,7 +63,6 @@ public class DataBase {
 
             String inStr;
             OutputStreamWriter writer = new OutputStreamWriter(out, "utf8");
-
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "utf8"));
 
             StringBuilder sb = new StringBuilder();
@@ -215,7 +214,7 @@ public class DataBase {
      * @since 2021/8/5
      */
     private void runCommand(OutputStreamWriter writer, String sql) throws IOException {
-        log.info(sql);
+        log.debug(sql);
         writer.write(sql);
         writer.flush();
     }

@@ -60,7 +60,7 @@
 
     <!-- 日志输出级别 -->
     <!-- 日志级别排序为： TRACE < DEBUG < INFO < WARN < ERROR -->
-   <root level="INFO">
+   <root level="DEBUG">
         <appender-ref ref="STDOUT_COLOR" />
         <appender-ref ref="FILE_OUTPUT" />
     </root>

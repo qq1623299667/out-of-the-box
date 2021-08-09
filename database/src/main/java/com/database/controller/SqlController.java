@@ -64,11 +64,25 @@ public class SqlController {
         return JSON.toJSONString(query);
     }
 
-    @GetMapping("/test2")
-    public void test2(){
+    /**
+     * mybatis动态sql-导入数据
+     * @author Will Shi
+     * @since 2021/8/9
+     */
+    @GetMapping("/loadAll")
+    public void loadAll(){
         dataBase.loadAll("D:\\pulmonary_function.sql");
-//        String backupCommand = "D:\\program\\mysql-8.0.26-winx64\\bin\\mysqldump -uroot -proot -R -c --set-charset=utf8 pulmonary_function";
-//        String outPutPath = "D:\\pulmonary_function.sql";
-//        dataBase.backup(backupCommand,outPutPath);
+    }
+
+    /**
+     * mybatis动态sql-导出数据
+     * @author Will Shi
+     * @since 2021/8/9
+     */
+    @GetMapping("/backup")
+    public void backup(){
+        String backupCommand = "D:\\program\\mysql-8.0.26-winx64\\bin\\mysqldump -uroot -proot -R -c --set-charset=utf8 pulmonary_function";
+        String outPutPath = "D:\\pulmonary_function.sql";
+        dataBase.backup(backupCommand,outPutPath);
     }
 }
